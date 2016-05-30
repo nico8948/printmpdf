@@ -38,7 +38,7 @@ ICON and css
 
 PRINTMPDF custom extra field with a pdf button
 ----------------------------------------------
-- This field is added to the types activated through the "Print using mPDF settings"
+- This field is added to the types activated (default: all) through the "Print using mPDF settings"
 - Using the node display you can control the visibility, label and weight of the pdf button.
 Don't forget to flush the cache after making changes! 
 
@@ -76,7 +76,7 @@ those tools need to be reported and fixed by their maintainers.
 DO NOT report bugs in those tools in the PDF Using mPDF module's issue queue
 at backdropcms.org
 
-Used path to mpdf: /modules/printmpdf/mpdf/
+Default location /modules/printmpdf/mpdf/
 
 MPDF support:
 -------------
