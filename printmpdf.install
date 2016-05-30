@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * @file
+ * Removing all PDF set variables and checks for mPDF library existence.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function printmpdf_install() {
+  // Default value of some custom variables.
+  // config_set('printmpdf.settings','printmpdf_pdf_page_size', 'A4');
+  // config_set('printmpdf.settings','printmpdf_pdf_font_size', 10);
+  // config_set('printmpdf.settings','printmpdf_pdf_default_font', 'DejaVuSerif');
+  // config_set('printmpdf.settings','printmpdf_pdf_filename', '[site:name] - [node:title] - [node:changed:custom:Y-m-d]');
+  config_get('printmpdf.settings','printmpdf');
+
+  $node_types = node_type_get_names();
+  foreach ($node_types as $type_name => $node_type_name ) {
+    config_set('printmpdf.settings','printmpdf_type_' . $type_name , 1);
+  }
+  
+  backdrop_load('module', 'printmpdf');
+}
+
+/*
+ * Implements hook_enable().
+ */
+function printmpdf_enable() {
+  printmpdf_create_folder();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function printmpdf_uninstall() {
+  // Removing all custom varible.
+  db_query("DELETE FROM {variable} WHERE name LIKE 'printmpdf_%'");
+  
+  printmpdf_clear_folder(NULL, TRUE);
+}
+
+/**
+ * Removes all pdf file and delete the folder.
+ *
+ * @param class $pdfmpdf
+ *   A variable holding standard class.
+ *
+ * @param boolean #delete
+ *   Variable indicating whether to delete folder permanently.
+ */
+function printmpdf_clear_folder(stdClass $pdfmpdf = NULL, $delete = FALSE) {
+  $folder = config_get('printmpdf.settings', 'printmpdf');
+  $folder = file_build_uri($folder);
+  return printmpdf_delete_recursive($folder, $delete);
+}
+
+/**
+ * Deletes all files and directories in the specified filepath recursively.
+ *
+ * If the specified path is a file then it will be passed to
+ * file_unmanaged_delete().
+ *
+ * Note that this only deletes visible files with write permission.
+ *
+ * @param string $folder_pth
+ *   A string containing either an URI or a file or directory path.
+ *
+ * @param boolean $delete_permanently
+ *   A boolean value indicating wheteher to delete folder permanently or not.
+ */
+function printmpdf_delete_recursive( $folder_pth, $delete_permanently = FALSE ) {
+  $folder_pth = backdrop_realpath($folder_pth);
+  if (is_dir($folder_pth)) {
+    $dir = dir($folder_pth);
+    while (($cs_file = $dir->read()) !== FALSE) {
+      // condition to avoid deleting of peer folders
+      if($cs_file != '.' && $cs_file != '..'){
+        $cs_file_path = $folder_pth . '/' . $cs_file;
+        file_unmanaged_delete_recursive($cs_file_path, TRUE);
+      }
+    }
+    $dir->close();
+    return $delete_permanently ? backdrop_rmdir($folder_pth) : TRUE;
+  }
+}

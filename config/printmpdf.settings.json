@@ -1,0 +1,20 @@
+{
+  "_config_name": "printmpdf.settings",
+  "printmpdf" : "printmpdf",
+  "printmpdf_pdf_page_size" : "A4",
+  "printmpdf_watermark_opacity" : "0.1",
+  "printmpdf_watermark_option" : "text",
+  "printmpdf_img_dpi" : 96,
+  "printmpdf_dpi" : 96,
+  "printmpdf_pdf_default_font" : "DejaVuSerif",
+  "printmpdf_pdf_font_size" : 10,
+  "printmpdf_margin_footer" : 9,
+  "printmpdf_margin_header" : 9,
+  "printmpdf_margin_left" : 15,
+  "printmpdf_margin_bottom" : 16,
+  "printmpdf_margin_right" : 15,
+  "printmpdf_margin_top" : 16,
+  "printmpdf_pdf_css_file" : "css/printmpdf.css",
+  "printmpdf_pdf_filename" : "[site:name] - [node:title] - [node:changed:custom:Y-m-d]"
+ }
+  

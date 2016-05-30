@@ -1,0 +1,8 @@
+name = Print using mPDF
+description = HTML to PDF conversion using mPDF Library.
+package = User interface
+type = module
+version = 1.0
+backdrop = 1.x
+configure = admin/config/user-interface/mpdf
+

@@ -1,0 +1,5 @@
+/* This can be used to control the PDF output */
+
+.hideinpdf {
+    display: none;
+}
