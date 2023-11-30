@@ -191,7 +191,7 @@ function printmpdf_config() {
       '#upload_location' => 'public://',
       '#upload_validators' => array(
         'file_validate_extensions' => array('gif png jpg jpeg'),
-        'file_validate_size' => array(MAX_FILE_SIZE * 1024 * 1024),
+        'file_validate_size' => array($max_filesize),
       ),
       '#states' => array(
         'visible' => array(

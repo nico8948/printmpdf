@@ -1,6 +1,12 @@
 ﻿Print using mPDF (printmpdf)
 ============================
 
+This branch is working with mPDF 8.2.x.  and php 8.2
+
+
+
+
+
 Converts a HTML page to PDF using mPDF PHP Library.
 It allows you to generate the following pdf documents of any node:
 

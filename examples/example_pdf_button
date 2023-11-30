@@ -1,0 +1,65 @@
+$pdffilename = 'example_pdffile';
+  $out .= '<p>'.backdrop_render(backdrop_get_form('example_pdf_form',$html,$pdffilename));
+
+
+**
+ *
+ */
+function example_pdf_form($form, &$form_state,$html,$filename){
+  $form['html'] = array('#type' => 'value', '#value' => $html);
+  $form['filename'] = array('#type' => 'value', '#value' => $filename);
+  $form['actions']['pdf'] = array(
+    '#type' => 'button',
+    '#value' => t('Export PDF'),
+    '#executes_submit_callback' => TRUE,
+    '#attributes' => array('CLASS' => 'examplepdfbutton'),
+    '#submit' => array('_example_pdf_print'),
+  );
+  return $form;
+}
+
+
+/**
+ *
+ */
+function _example_pdf_print($form, &$form_state){
+  if (function_exists('printmpdf_api')) {
+    $html = '<html>
+    <head>
+     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+     <style type="text/css">';
+    $css = file_get_contents(path_to_theme().'/mail.css');
+    $html .= $css;
+    $html .= '</style>
+     </head>
+    <body>';
+    $html .= $form_state['values']['html'];
+    $html .= '</body>
+    </html>';
+    //remove links
+    $html = preg_replace('#<a.*?>(.*?)</a>#i', '\1', $html);
+    config_set('printmpdf.settings', 'printmpdf_pdf_save_option', 2);
+    printmpdf_api($html, $form_state['values']['filename']);
+
+    $file = backdrop_realpath('public://').'/printmpdf/'.$form_state['values']['filename'].'.pdf';
+
+    if (file_exists($file)) {
+      backdrop_add_http_header('Pragma', 'public');
+      backdrop_add_http_header('Expires', '0');
+      backdrop_add_http_header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
+      backdrop_add_http_header('Content-Type', 'application/pdf');
+      backdrop_add_http_header('Content-Disposition', 'attachment; filename=' . $form_state['values']['filename'].'.pdf;');
+      backdrop_add_http_header('Content-Transfer-Encoding', 'binary');
+      backdrop_add_http_header('Content-Length', filesize($file));
+      readfile($file);
+      unlink($file);
+      backdrop_set_message(t('Pdf file created'));
+      backdrop_exit();
+    }else {
+      backdrop_set_message(t('File not found'.$file), 'error');
+    }
+  }else{
+    backdrop_set_message(t('printmpdf_api not found'), 'error');
+  }
+}
+

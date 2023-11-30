@@ -166,8 +166,8 @@ function _printmpdf_generator($html, $filename = NULL) {
   $margin_footer = config_get('printmpdf.settings','printmpdf_margin_footer');
 
   // Creating Instance of mPDF Class Library.
-  $mpdf = new mPDF(
-    '',
+/*
+  $mpdf = new \Mpdf\Mpdf(
     array($paper_size[$page]['w'], $paper_size[$page]['h']),
     $font_size,
     $font_style,
@@ -178,6 +178,9 @@ function _printmpdf_generator($html, $filename = NULL) {
     $margin_header,
     $margin_footer
   );
+*/
+  $mpdf = new \Mpdf\Mpdf(['tempDir' => backdrop_realpath('public://').'/tmp/']);
+
 
   // set document DPI
   $mpdf->dpi = (int) config_get('printmpdf.settings','printmpdf_dpi');
@@ -318,8 +321,8 @@ function _printmpdf_generator($html, $filename = NULL) {
       // Save to server 'Public file system path'.
       $path = $folder . '/' . $filename . '.pdf';
       $mpdf->Output($path , 'F');
-      backdrop_goto($_SERVER['HTTP_REFERER']);
-      exit;
+//      backdrop_goto($_SERVER['HTTP_REFERER']);
+//      exit;
       break;
     case 0:
     default:
@@ -361,7 +364,7 @@ function printmpdf_api($html, $printmpdf_pdf_filename = NULL) {
  *   TRUE if mPDF library path exists.
  */
 function printmpdf_library_exist() {
-  require_once BACKDROP_ROOT . '/' . backdrop_get_path('module', 'printmpdf') . '/mpdf/mpdf.php' ; 
+  require_once BACKDROP_ROOT . '/' . backdrop_get_path('module', 'printmpdf') . '/vendor/autoload.php' ; 
   return TRUE;
 }
 
@@ -401,7 +404,7 @@ function printmpdf_node_view_alter(&$build) {
  * Function to check if a folder/file is writable
  */
 function printmpdf_is_writable($path) {
-  if ($path{strlen($path)-1} == '/') {
+  if ($path[strlen($path)-1] == '/') {
     return backdrop_is_writable($path . uniqid(mt_rand()) . '.tmp');
   }
   elseif (is_dir($path)) {
